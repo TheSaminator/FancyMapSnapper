@@ -1,0 +1,95 @@
+### Fancy Map Snapper ###
+
+=== How do I open this? ===
+
+Double-click on FancyMapSnapper.exe
+
+=== How do I create a map with this? ===
+
+--- Step 1: Listing places that you want to see on your map ---
+
+At the first screen, use the [+] button to add an input field.
+
+Into this input field, write the name of a place. For technical reasons,
+this name has to correspond exactly with the `name` field of a place on
+OpenStreetMap.
+
+{?} FOR THE CURIOUS:
+This is because fuzzy-searching with regex takes much longer than
+hard-searching for exact text, so you the user would be waiting a lot
+longer for the Overpass API to load everything if this program did use
+regex searching.
+
+{!} IMPORTANT:
+Also, keep in mind how many places might have that name. If you
+search for "Trollface Parkway", you're not just getting the
+"Trollface Parkway" that's next to where you live, you're getting
+every single "Trollface Parkway" on Earth. That might be a lot,
+depending on what search phrase you're looking for.
+
+If you want to include another place, click the [+] button again,
+and write your second place name into the second input field.
+
+The [^] button moves an input field one spot up, while the [v] button
+moves it one spot down. If you want to remove a slot, the [-] button
+removes the last input field in the list. To remove an input field at
+some other position than the last, click the [v] button to move it
+to the end, then click the [-] button.
+
+Once you have all the places you want to see, click the [Build Map]
+button, grab something to eat or drink, use the bathroom, find a
+Youtube video essay to watch, because this might take a bit of time.
+
+--- Step 2: Looking at your really cool map ---
+
+Once your map is loaded, you might notice that there are a lot more
+objects than you asked for. This is because Fancy Map Snapper uses
+the places you've listed to generate a bounding box, then it queries
+for everything inside of that bounding box.
+
+Objects ("ways" on OpenStreetMap) are either polygons or sequences
+of lines. They may have names, or they may be unnamed. On the right,
+there is a scroll panel that has every object on the map. The three
+radio buttons determine how that object is rendered: green means that
+both the object itself and the label with its name are rendered, yellow
+means that only the object's shape is rendered while its name label
+is hidden, and red means that the object is completely hidden and not
+rendered at all.
+
+The nine buttons above the scroll panel do mass selections: [Show All]
+sets every object to shown and labeled, [Un-Label All] sets every
+object to shown but not labeled, and [Hide All] sets every object to
+completely hidden.
+
+The [Show Areas], [Un-Label Areas], and [Hide Areas] buttons do the same
+with all of the polygonal areas on the map, the ones that are filled with
+a solid color. Similarly, the [Show Paths], [Un-Label Paths], and
+[Hide Paths] buttons do the same with the paths on the map, that are
+stroked with colored lines and not filled.
+
+On the edges of the map, there are arrow buttons: [<], [^], [>], and [v].
+These, depending on direction, will either shrink or grow the bounding box.
+
+After expanding the bounding box, you may notice that the map is largely
+barren outside the loaded area. To remedy this, click the [Repopulate Bounding Box]
+button on the bottom left. This will return to the "Loading..." screen,
+but once the map is done loading, every single object present within
+the entire bounding box will be loaded onto the map.
+
+{!} IMPORTANT:
+Depending on the size of your bounding box, this may take a while.
+
+On the bottom left, there is an input field and an [Add] button. This
+searches the OSM Overpass API for an object with the name that is typed
+into the input field, and adds it to the map without expanding the
+bounding box, and without searching for anything else in the same
+bounding box.
+
+--- Step 3: Keeping your map so you may treasure and cherish it ---
+
+Finally, to export the rendered map, click the [Export] button. This
+saves it as a PNG file in the `exports` directory and displays it to
+you inside your file explorer.
+
+To return to the initial screen where you list the places you want
+to see on your map, click the [Close] button.
