@@ -49,8 +49,9 @@ public class CustomizingMap : ApplicationMode {
 	private readonly UiScrollPane _toggles = new() { OuterSize = new SKRect(1200, 160, 1584, 820) };
 	private readonly Dictionary<RadioButtonGroup, List<OsmWay>> _associatedWays = new();
 
-	private readonly UiButton _exportMap = new() { Size = new SKRect(1216, 836, 1392, 884), Text = "Export" };
-	private readonly UiButton _closeMap = new() { Size = new SKRect(1408, 836, 1584, 884), Text = "Close" };
+	private readonly UiButton _saveMap = new() { Size = new SKRect(1216, 836, 1328, 884), Text = "Save", FontSize = 20 };
+	private readonly UiButton _exportMap = new() { Size = new SKRect(1344, 836, 1456, 884), Text = "Export", FontSize = 20 };
+	private readonly UiButton _closeMap = new() { Size = new SKRect(1472, 836, 1584, 884), Text = "Close", FontSize = 20 };
 
 	private void RepopulateBBox() {
 		_next = new LoadingOsmData(_places, in _queryResult.BBox);
@@ -59,7 +60,7 @@ public class CustomizingMap : ApplicationMode {
 	private void AddNewMapObject(StringBuilder name) {
 		var inputText = name.ToString();
 		if (inputText.StartsWith("UH "))
-			inputText = "University Hospitals " + inputText[3..];
+			inputText = "University Hospitals " + inputText["UH ".Length..];
 		_next = new LoadingOsmData(_places, new List<string> { inputText }, _queryResult);
 	}
 
@@ -163,6 +164,10 @@ public class CustomizingMap : ApplicationMode {
 
 	private static readonly Lazy<DirectoryInfo> ExportDirLazy = new(() => Directory.Exists("exports") ? new DirectoryInfo("exports") : Directory.CreateDirectory("exports"));
 	private static DirectoryInfo ExportDir => ExportDirLazy.Value;
+
+	private void SaveMap() {
+		_next = new SavingMap(_places, _queryResult);
+	}
 
 	private void ExportMap() {
 		var bboxWidth = _queryResult.BBox.XMax - _queryResult.BBox.XMin;
@@ -381,9 +386,11 @@ public class CustomizingMap : ApplicationMode {
 			ref y
 		);
 
+		_ui.AddChild(_saveMap);
 		_ui.AddChild(_exportMap);
 		_ui.AddChild(_closeMap);
 
+		_saveMap.OnClick += SaveMap;
 		_exportMap.OnClick += ExportMap;
 		_closeMap.OnClick += CloseMap;
 	}

@@ -27,6 +27,12 @@ search for "Trollface Parkway", you're not just getting the
 every single "Trollface Parkway" on Earth. That might be a lot,
 depending on what search phrase you're looking for.
 
+If you don't know the name that a place has on OpenStreetMap, but
+you do know its street address, you can click the [By Address] button
+and enter in the house number and street name on the first row, then
+the city, state, and postal code on the second row, then click the
+[Add] button to add the name or ID of the place to the list.
+
 If you want to include another place, click the [+] button again,
 and write your second place name into the second input field.
 
@@ -90,6 +96,11 @@ bounding box.
 Finally, to export the rendered map, click the [Export] button. This
 saves it as a PNG file in the `exports` directory and displays it to
 you inside your file explorer.
+
+To save your map so you can edit it later, click the [Save] button,
+enter in a saved-map name, and click [Save] again. Then later, you
+can open the program, click [Load Map], and select the name of your
+saved map to load it back up.
 
 To return to the initial screen where you list the places you want
 to see on your map, click the [Close] button.

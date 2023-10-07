@@ -20,7 +20,8 @@ write labels on them, and render an image that you can export!
   * [ ] Line thickness
   * [ ] Text size
   * [ ] Image size
-* [ ] Saving map data so it can be opened again
+* [x] Saving map data so it can be opened again
+* [x] Searching for places by-address instead of by-name
 
 ## Fluff
 

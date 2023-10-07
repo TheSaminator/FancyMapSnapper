@@ -31,6 +31,48 @@ public static class XmlHelper {
 		return nodeQuery;
 	}
 
+	public static XmlElement AddressQueryElement(this XmlDocument scriptDoc, string osmType, string houseNum, string streetName, string city, string state, string postCode) {
+		var nodeQuery = scriptDoc.CreateElement("query");
+		nodeQuery.SetAttribute("type", osmType);
+
+		if (!string.IsNullOrWhiteSpace(houseNum)) {
+			var nodeQueryHasKv = scriptDoc.CreateElement("has-kv");
+			nodeQueryHasKv.SetAttribute("k", "addr:housenumber");
+			nodeQueryHasKv.SetAttribute("v", houseNum);
+			nodeQuery.AppendChild(nodeQueryHasKv);
+		}
+
+		if (!string.IsNullOrWhiteSpace(streetName)) {
+			var nodeQueryHasKv = scriptDoc.CreateElement("has-kv");
+			nodeQueryHasKv.SetAttribute("k", "addr:street");
+			nodeQueryHasKv.SetAttribute("v", streetName);
+			nodeQuery.AppendChild(nodeQueryHasKv);
+		}
+
+		if (!string.IsNullOrWhiteSpace(city)) {
+			var nodeQueryHasKv = scriptDoc.CreateElement("has-kv");
+			nodeQueryHasKv.SetAttribute("k", "addr:city");
+			nodeQueryHasKv.SetAttribute("v", city);
+			nodeQuery.AppendChild(nodeQueryHasKv);
+		}
+
+		if (!string.IsNullOrWhiteSpace(state)) {
+			var nodeQueryHasKv = scriptDoc.CreateElement("has-kv");
+			nodeQueryHasKv.SetAttribute("k", "addr:state");
+			nodeQueryHasKv.SetAttribute("v", state);
+			nodeQuery.AppendChild(nodeQueryHasKv);
+		}
+
+		if (!string.IsNullOrWhiteSpace(postCode)) {
+			var nodeQueryHasKv = scriptDoc.CreateElement("has-kv");
+			nodeQueryHasKv.SetAttribute("k", "addr:postcode");
+			nodeQueryHasKv.SetAttribute("v", postCode);
+			nodeQuery.AppendChild(nodeQueryHasKv);
+		}
+
+		return nodeQuery;
+	}
+
 	public static XmlElement BBoxQueryElement(this XmlDocument scriptDoc, string osmType, MapBoundingBox bbox, Dictionary<string, string> tags) {
 		var nodeQuery = scriptDoc.CreateElement("query");
 		nodeQuery.SetAttribute("type", osmType);
@@ -87,6 +129,14 @@ public static class XmlHelper {
 	}
 
 	public static void NameQuery(this XmlDocument scriptDoc, XmlElement osmScript, string place) {
+		if (place.StartsWith("id:")) {
+			var id = place["id:".Length..];
+			scriptDoc.UnionQuery(osmScript, new List<Func<XmlDocument, XmlElement>> {
+				xmlDoc => xmlDoc.IdQueryElement("way", id)
+			});
+			return;
+		}
+
 		scriptDoc.UnionQuery(osmScript, new List<Func<XmlDocument, XmlElement>> {
 			xmlDoc => xmlDoc.NameQueryElement("way", place)
 		});
@@ -95,6 +145,12 @@ public static class XmlHelper {
 	public static void BBoxQuery(this XmlDocument scriptDoc, XmlElement osmScript, MapBoundingBox bbox, Dictionary<string, string> wayTags) {
 		scriptDoc.UnionQuery(osmScript, new List<Func<XmlDocument, XmlElement>> {
 			xmlDoc => xmlDoc.BBoxQueryElement("way", bbox, wayTags)
+		});
+	}
+
+	public static void AddressQuery(this XmlDocument scriptDoc, XmlElement osmScript, string houseNum, string streetName, string city, string state, string postCode) {
+		scriptDoc.UnionQuery(osmScript, new List<Func<XmlDocument, XmlElement>> {
+			xmlDoc => xmlDoc.AddressQueryElement("way", houseNum, streetName, city, state, postCode)
 		});
 	}
 

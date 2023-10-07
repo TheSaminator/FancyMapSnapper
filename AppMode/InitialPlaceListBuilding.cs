@@ -20,19 +20,31 @@ public class InitialPlaceListBuilding : ApplicationMode {
 	private readonly UiScrollPane _inputs = new() { OuterSize = new SKRect(400, 200, 1200, 640) };
 
 	private readonly UiButton _addButton = new() {
-		Size = new SKRect(400, 672, 784, 720),
+		Size = new SKRect(400, 672, 584, 720),
 		IsEnabled = true,
 		Text = "+"
 	};
 
+	private readonly UiButton _byAddressButton = new() {
+		Size = new SKRect(616, 672, 984, 720),
+		IsEnabled = true,
+		Text = "By Address"
+	};
+
 	private readonly UiButton _removeButton = new() {
-		Size = new SKRect(816, 672, 1200, 720),
+		Size = new SKRect(1016, 672, 1200, 720),
 		IsEnabled = false,
 		Text = "-"
 	};
 
+	private readonly UiButton _loadButton = new() {
+		Size = new SKRect(400, 752, 784, 800),
+		IsEnabled = true,
+		Text = "Load Map"
+	};
+
 	private readonly UiButton _doneButton = new() {
-		Size = new SKRect(608, 752, 992, 800),
+		Size = new SKRect(816, 752, 1200, 800),
 		IsEnabled = false,
 		Text = "Build Map"
 	};
@@ -118,7 +130,11 @@ public class InitialPlaceListBuilding : ApplicationMode {
 		moveDownButton.IsEnabled = false;
 	}
 
-	private void DoneListing() {
+	private void GetByAddress() {
+		_next = new AddPlaceToListByAddress(GetPlaces());
+	}
+
+	private void LoadMap() {
 		var places = new List<string>();
 
 		for (var i = 0; i < _inputs.NumChildren; i++) {
@@ -129,9 +145,33 @@ public class InitialPlaceListBuilding : ApplicationMode {
 
 			// Special case: abbreviating University Hospitals as UH
 			if (inputText.StartsWith("UH "))
-				inputText = "University Hospitals " + inputText[3..];
+				inputText = "University Hospitals " + inputText["UH ".Length..];
 			places.Add(inputText);
 		}
+
+		_next = new LoadingMap(places);
+	}
+
+	private List<string> GetPlaces() {
+		var places = new List<string>();
+
+		for (var i = 0; i < _inputs.NumChildren; i++) {
+			var group = (UiGroup)_inputs.ChildAt(i);
+			var input = (UiInputField)group.ChildAt(0);
+			var inputText = input.Builder.ToString();
+			if (string.IsNullOrWhiteSpace(inputText)) continue;
+
+			// Special case: abbreviating University Hospitals as UH
+			if (inputText.StartsWith("UH "))
+				inputText = "University Hospitals " + inputText["UH ".Length..];
+			places.Add(inputText);
+		}
+
+		return places;
+	}
+
+	private void DoneListing() {
+		var places = GetPlaces();
 
 		if (places.Count > 0) {
 			_next = new LoadingOsmData(places);
@@ -142,11 +182,15 @@ public class InitialPlaceListBuilding : ApplicationMode {
 		_ui.AddChild(_inputs);
 
 		_addButton.OnClick += AddInputAtEnd;
+		_byAddressButton.OnClick += GetByAddress;
 		_removeButton.OnClick += RemoveInputAtEnd;
+		_loadButton.OnClick += LoadMap;
 		_doneButton.OnClick += DoneListing;
 
 		_ui.AddChild(_addButton);
+		_ui.AddChild(_byAddressButton);
 		_ui.AddChild(_removeButton);
+		_ui.AddChild(_loadButton);
 		_ui.AddChild(_doneButton);
 
 		foreach (var place in _places) {
