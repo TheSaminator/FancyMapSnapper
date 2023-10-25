@@ -39,8 +39,8 @@ and write your second place name into the second input field.
 The [^] button moves an input field one spot up, while the [v] button
 moves it one spot down. If you want to remove a slot, the [-] button
 removes the last input field in the list. To remove an input field at
-some other position than the last, click the [v] button to move it
-to the end, then click the [-] button.
+some other position than the last, keep clicking the [v] button to move
+it to the end, then click the [-] button.
 
 Once you have all the places you want to see, click the [Build Map]
 button, grab something to eat or drink, use the bathroom, find a

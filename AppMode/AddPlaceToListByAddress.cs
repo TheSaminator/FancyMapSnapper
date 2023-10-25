@@ -42,25 +42,11 @@ public class AddPlaceToListByAddress : ApplicationMode {
 		var metaElement = osmRoot["meta"];
 		if (metaElement != null) osmRoot.RemoveChild(metaElement);
 
-		List<string> places = new();
-		foreach (var wayObj in osmRoot.GetElementsByTagName("way")) {
-			var wayElement = (XmlElement)wayObj;
+		var places = from XmlNode wayNode in osmRoot.GetElementsByTagName("way")
+			where wayNode is XmlElement
+			select "id:" + ((XmlElement)wayNode).GetAttribute("id");
 
-			var id = wayElement.GetAttribute("id");
-			string? name = null;
-			foreach (var tagObj in wayElement.GetElementsByTagName("tag")) {
-				var tagElement = (XmlElement)tagObj;
-				if (tagElement.GetAttribute("k") == "name")
-					name = tagElement.GetAttribute("v");
-			}
-
-			if (name == null)
-				places.Add("id:" + id);
-			else
-				places.Add(name);
-		}
-
-		return places;
+		return places.ToList();
 	}
 
 	private void AddFromAddress() {
