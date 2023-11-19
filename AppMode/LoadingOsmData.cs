@@ -34,7 +34,7 @@ public class LoadingOsmData : ApplicationMode {
 
 				var osmRoot = taskResult["osm"];
 				if (osmRoot == null) {
-					Console.WriteLine($"Got error document: {taskResult.ToXmlString()}");
+					await Console.Error.WriteLineAsync($"Got error document: {taskResult.ToXmlString()}");
 					continue;
 				}
 
@@ -45,7 +45,7 @@ public class LoadingOsmData : ApplicationMode {
 				var metaElement = osmRoot["meta"];
 				if (metaElement != null) osmRoot.RemoveChild(metaElement);
 
-				Console.WriteLine($"Processing result xml: {taskResult.ToXmlString()}");
+				await Console.Out.WriteLineAsync($"Processing result xml: {taskResult.ToXmlString()}");
 
 				// Disambiguate type of response: way
 				foreach (var wayObj in osmRoot.GetElementsByTagName("way")) {
@@ -80,8 +80,8 @@ public class LoadingOsmData : ApplicationMode {
 
 					var nodeId = nodeElement.GetAttribute("id");
 					var node = OsmNode.GetNode(nodeId);
-					if (!double.TryParse(nodeElement.GetAttribute("lat"), out node.Location.Y)) Console.WriteLine($"Unable to get latitude from node with id {nodeId}");
-					if (!double.TryParse(nodeElement.GetAttribute("lon"), out node.Location.X)) Console.WriteLine($"Unable to get longitude from node with id {nodeId}");
+					if (!double.TryParse(nodeElement.GetAttribute("lat"), out node.Location.Y)) await Console.Error.WriteLineAsync($"Unable to get latitude from node with id {nodeId}");
+					if (!double.TryParse(nodeElement.GetAttribute("lon"), out node.Location.X)) await Console.Error.WriteLineAsync($"Unable to get longitude from node with id {nodeId}");
 
 					if (!node.Location.IsNowhere) {
 						if (mode == QueryMode.BBoxExpansion)
@@ -124,7 +124,7 @@ public class LoadingOsmData : ApplicationMode {
 		var result = new OsmQueryResult();
 		result.BBox.Clear();
 
-		Console.WriteLine("Phase 1 of loading...");
+		await Console.Out.WriteLineAsync("Phase 1 of loading...");
 		await ProcessRequestedWays(taskQueue, QueryMode.BBoxExpansion, result);
 
 		if (result.BBox.IsEmpty)
@@ -135,7 +135,7 @@ public class LoadingOsmData : ApplicationMode {
 			(scriptDoc, osmScript) => scriptDoc.BBoxQuery(osmScript, result.BBox, wayTags)
 		).GetPlaceXml());
 
-		Console.WriteLine("Phase 2 of loading...");
+		await Console.Out.WriteLineAsync("Phase 2 of loading...");
 		await ProcessRequestedWays(taskQueue, QueryMode.PopulateLists, result);
 
 		return result;
@@ -149,7 +149,7 @@ public class LoadingOsmData : ApplicationMode {
 			(scriptDoc, osmScript) => scriptDoc.NameQuery(osmScript, place)
 		).GetPlaceXml()).ToList();
 
-		Console.WriteLine("Phase 2 of loading...");
+		await Console.Out.WriteLineAsync("Phase 2 of loading...");
 		await ProcessRequestedWays(taskQueue, QueryMode.PopulateLists, result);
 
 		return result.Ways;
@@ -167,7 +167,7 @@ public class LoadingOsmData : ApplicationMode {
 			).GetPlaceXml()
 		};
 
-		Console.WriteLine("Phase 2 of loading...");
+		await Console.Out.WriteLineAsync("Phase 2 of loading...");
 		await ProcessRequestedWays(taskQueue, QueryMode.PopulateLists, result);
 
 		return result;
